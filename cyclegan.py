@@ -349,7 +349,7 @@ def main():
         softL_c = 0.0
     print('Soft Labeling: ', softL_c)
 
-
+    create_graph()
     sess = tf.Session()
 
     # DEFINE OUR MODEL AND LOSS FUNCTIONS
@@ -503,6 +503,10 @@ def main():
             generated_X, generated_Y = sess.run([genF, genG])
             _, _, _, _, summary_str = sess.run([G_optim, DY_optim, F_optim, DX_optim, summary_op],
                     feed_dict={fake_Y_sample: cache_Y.fetch(generated_Y), fake_X_sample: cache_X.fetch(generated_X)})
+            embed_tensor = sess.graph.get_tensor_by_name('inception/pool_3:0')
+            embedding = sess.run(embed_tensor,
+                           {'inception/DecodeJpeg:0': generated_X})
+            print(embedding)
 
             counter += 1
             print("[%4d] time: %4.4f" % (counter, time.time() - start_time))
